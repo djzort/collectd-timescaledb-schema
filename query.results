@@ -1,0 +1,24 @@
+                                                                              QUERY PLAN                                                                               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=40423.86..40426.36 rows=1000 width=25) (actual time=1824.830..1827.008 rows=6804 loops=1)
+   Sort Key: (time_bucket('00:01:00'::interval, "values".tstamp))
+   Sort Method: quicksort  Memory: 724kB
+   ->  HashAggregate  (cost=40359.03..40374.03 rows=1000 width=25) (actual time=1815.610..1820.219 rows=6804 loops=1)
+         Group Key: time_bucket('00:01:00'::interval, "values".tstamp), identifiers.type_inst
+         ->  Hash Join  (cost=4.35..40020.48 rows=45140 width=25) (actual time=0.490..1764.443 rows=40824 loops=1)
+               Hash Cond: ("values".id = identifiers.id)
+               ->  Append  (cost=0.00..33809.32 rows=1504682 width=20) (actual time=0.049..1388.556 rows=1503682 loops=1)
+                     ->  Seq Scan on "values"  (cost=0.00..0.00 rows=1 width=20) (actual time=0.009..0.009 rows=0 loops=1)
+                           Filter: ((tstamp >= '2017-12-04 21:22:53+00'::timestamp with time zone) AND (tstamp <= '2017-12-05 21:22:53+00'::timestamp with time zone))
+                     ->  Seq Scan on _hyper_1_1_chunk  (cost=0.00..33809.32 rows=1504681 width=20) (actual time=0.039..997.507 rows=1503682 loops=1)
+                           Filter: ((tstamp >= '2017-12-04 21:22:53+00'::timestamp with time zone) AND (tstamp <= '2017-12-05 21:22:53+00'::timestamp with time zone))
+                           Rows Removed by Filter: 1079
+               ->  Hash  (cost=4.28..4.28 rows=6 width=13) (actual time=0.134..0.134 rows=6 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     ->  Seq Scan on identifiers  (cost=0.00..4.28 rows=6 width=13) (actual time=0.039..0.113 rows=6 loops=1)
+                           Filter: (((host)::text = 'stats.house'::text) AND ((plugin)::text = 'memory'::text))
+                           Rows Removed by Filter: 146
+ Planning time: 4.237 ms
+ Execution time: 1828.628 ms
+(20 rows)
+
