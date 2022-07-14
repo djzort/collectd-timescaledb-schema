@@ -63,9 +63,9 @@
 
 CREATE TABLE identifiers (
     id integer NOT NULL PRIMARY KEY,
-    host character varying(64) NOT NULL,
-    plugin character varying(64) NOT NULL,
-    plugin_inst character varying(64) DEFAULT NULL::character varying,
+    host character varying(126) NOT NULL,
+    plugin character varying(126) NOT NULL,
+    plugin_inst character varying(126) DEFAULT NULL::character varying,
     type character varying(64) NOT NULL,
     type_inst character varying(64) DEFAULT NULL::character varying,
 
@@ -96,7 +96,8 @@ CREATE TABLE "values" (
         REFERENCES identifiers
         ON DELETE cascade,
     tstamp timestamp with time zone NOT NULL,
-    name character varying(64) NOT NULL,
+    name character varying(126) NOT NULL,
+    value_type character varying(64) NOT NULL,
     value double precision NOT NULL,
 
     UNIQUE(tstamp, id, name)
@@ -123,7 +124,7 @@ CREATE OR REPLACE VIEW collectd
                     ELSE ''
                 END
                 || coalesce(type_inst, '') AS identifier,
-            tstamp, name, value
+            tstamp, name, value_type AS type, value
         FROM identifiers JOIN values ON values.id = identifiers.id;
 
 CREATE OR REPLACE FUNCTION collectd_insert(
@@ -142,8 +143,8 @@ DECLARE
     p_type alias for $5;
     p_type_instance alias for $6;
     p_value_names alias for $7;
-    -- don't use the type info; for 'StoreRates true' it's 'gauge' anyway
-    -- p_type_names alias for $8;
+    -- for 'StoreRates true' it's always 'gauge'
+    p_type_names alias for $8;
     p_values alias for $9;
     ds_id integer;
     i integer;
@@ -163,8 +164,8 @@ BEGIN
     i := 1;
     LOOP
         EXIT WHEN i > array_upper(p_value_names, 1);
-        INSERT INTO values (id, tstamp, name, value)
-            VALUES (ds_id, p_time, trim(both '''' from p_value_names[i]), p_values[i]);
+        INSERT INTO values (id, tstamp, name, value_type, value)
+            VALUES (ds_id, p_time, trim(both '''' from p_value_names[i]), p_type_names[i], p_values[i]);
         i := i + 1;
     END LOOP;
 END;
