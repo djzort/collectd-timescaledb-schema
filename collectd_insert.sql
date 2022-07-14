@@ -124,7 +124,7 @@ CREATE OR REPLACE VIEW collectd
                     ELSE ''
                 END
                 || coalesce(type_inst, '') AS identifier,
-            tstamp, name, value_type AS type, value
+            tstamp, name, value_type, value
         FROM identifiers JOIN values ON values.id = identifiers.id;
 
 CREATE OR REPLACE FUNCTION collectd_insert(
