@@ -165,7 +165,7 @@ BEGIN
     LOOP
         EXIT WHEN i > array_upper(p_value_names, 1);
         INSERT INTO values (id, tstamp, name, value_type, value)
-            VALUES (ds_id, p_time, trim(both '''' from p_value_names[i]), p_type_names[i], p_values[i]);
+            VALUES (ds_id, p_time, trim(both '''' from p_value_names[i]), trim(both '''' from p_type_names[i]), p_values[i]);
         i := i + 1;
     END LOOP;
 END;
