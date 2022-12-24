@@ -104,13 +104,13 @@ CREATE TABLE "values" (
 );
 
 CREATE INDEX values_tstamp_asc ON values (tstamp);
-CREATE INDEX values_tstamp_desc ON values (tstamp DESC);
+CREATE INDEX values_tstamp_desc_id_name on values (tstamp DESC, id, name);
 
 -- This demonstrates how to set a custom partition for your
 -- hypertable. The default partition is 30 days.  See
 -- http://docs.timescale.com/latest/api for additional information.
--- SELECT create_hypertable('values', 'tstamp',
---     chunk_time_interval => interval '1 day');
+SELECT create_hypertable('values', 'tstamp',
+    chunk_time_interval => interval '1 day');
 
 CREATE OR REPLACE VIEW collectd
     AS SELECT host, plugin, plugin_inst, type, type_inst,
