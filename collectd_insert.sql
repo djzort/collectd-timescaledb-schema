@@ -78,7 +78,7 @@ CREATE SEQUENCE identifiers_id_seq
     INCREMENT BY 1
     NO MINVALUE
     NO MAXVALUE
-    CACHE 1;
+    CACHE 10;
 
 ALTER TABLE identifiers
     ALTER COLUMN id
