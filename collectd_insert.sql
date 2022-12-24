@@ -112,6 +112,8 @@ CREATE INDEX values_tstamp_desc_id_name on values (tstamp DESC, id, name);
 SELECT create_hypertable('values', 'tstamp',
     chunk_time_interval => interval '1 day');
 
+SELECT add_retention_policy('values', interval '14 days');
+
 CREATE OR REPLACE VIEW collectd
     AS SELECT host, plugin, plugin_inst, type, type_inst,
             host
